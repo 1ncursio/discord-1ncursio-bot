@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "bun run src/main.ts",
-    "command:apply": "bun run src/commands/apply.ts"
+    "command:apply": "bun run src/commands/apply.ts",
+    "command:clean": "bun run src/commands/clean.ts"
   },
   "devDependencies": {
     "bun-types": "latest"

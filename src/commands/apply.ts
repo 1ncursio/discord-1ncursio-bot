@@ -1,9 +1,5 @@
-import {
-    ApplicationCommand,
-    ApplicationCommandOptionType,
-    REST,
-    Routes,
-} from "discord.js";
+import { REST, Routes } from "discord.js";
+import applicationCommands from "./applicationCommands";
 
 const main = async () => {
   if (!process.env.TOKEN) {
@@ -14,30 +10,12 @@ const main = async () => {
     throw new Error("APPLICATION_ID environment variable is required!");
   }
 
-  const commands: ApplicationCommand[] = [
-    {
-      name: "clean",
-      description: "Clean up the messages",
-      options: [
-        {
-          type: ApplicationCommandOptionType.Integer,
-          name: "amount",
-          description: "The amount of messages to clean up",
-          required: false,
-          maxValue: 100,
-          minValue: 1,
-          autocomplete: true,
-        },
-      ],
-    },
-  ];
-
   const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
   console.log("Started refreshing application (/) commands.");
 
   await rest.put(Routes.applicationCommands(process.env.APPLICATION_ID), {
-    body: commands,
+    body: applicationCommands.map((command) => command.toJSON()),
   });
 
   console.log("Successfully reloaded application (/) commands.");
