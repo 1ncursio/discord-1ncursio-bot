@@ -1,8 +1,6 @@
-import { ChannelType, Interaction } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction } from "discord.js";
 
-const cleanHandler = (interaction: Interaction) => async () => {
-  if (!interaction.isChatInputCommand()) return;
-
+const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
   const amount = interaction.options.getInteger("amount") ?? 10;
   const { channel } = interaction;
   if (channel?.type !== ChannelType.GuildText) {
