@@ -1,39 +1,17 @@
-import {
-    ChannelType,
-    DiscordAPIError,
-    DiscordjsError,
-    Interaction,
-} from "discord.js";
+import { DiscordAPIError, DiscordjsError, Interaction } from "discord.js";
+import { match } from "ts-pattern";
 import { Commands } from "../../commands/applicationCommands";
+import cleanHandler from "./cleanHandler";
+import pingHandler from "./pingHandler";
 
 const interactionHandler = async (interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   try {
-    if (interaction.commandName === Commands.Clean) {
-      const amount = interaction.options.getInteger("amount") ?? 10;
-      const { channel } = interaction;
-      if (channel?.type !== ChannelType.GuildText) {
-        await interaction.reply("Cannot delete messages in this channel!");
-        return;
-      }
-
-      if (amount < 1 || amount > 100) {
-        await interaction.reply("Amount must be between 1 and 100!");
-        return;
-      }
-
-      await interaction.deferReply({
-        ephemeral: true,
-        fetchReply: true,
-      });
-
-      const deletedMessages = await channel.bulkDelete(amount);
-
-      await interaction.editReply(`Deleted ${deletedMessages.size} messages!`);
-    } else {
-      await interaction.reply("Unknown command!");
-    }
+    match(interaction.commandName)
+      .with(Commands.Clean, cleanHandler(interaction))
+      .with(Commands.Ping, pingHandler(interaction))
+      .otherwise(async () => await interaction.reply("Unknown command!"));
   } catch (error) {
     console.error(error);
 

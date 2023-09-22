@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "discord.js";
 
 export enum Commands {
   Clean = "clean",
+  Ping = "ping",
 }
 
 const applicationCommands = [
@@ -29,6 +30,15 @@ const applicationCommands = [
         .setMinValue(1)
         .setAutocomplete(true)
     ),
+  new SlashCommandBuilder()
+    .setName(Commands.Ping)
+    .setNameLocalizations({
+      ko: "핑",
+    })
+    .setDescription("Send a ping message")
+    .setDescriptionLocalizations({
+      ko: "핑 메시지를 보냅니다.",
+    }),
 ];
 
 export default applicationCommands;
