@@ -18,7 +18,25 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
     fetchReply: true,
   });
 
-  const deletedMessages = await channel.bulkDelete(amount, true);
+  const messagesToDelete = await channel.messages.fetch({
+    limit: 100,
+  });
+  const deletedMessages = await channel.bulkDelete(messagesToDelete, true);
+  const messagesOlder = messagesToDelete.filter(
+    (val) => !deletedMessages.has(val.id)
+  );
+
+  if (messagesOlder.size > 0) {
+    let count = 0;
+    // Delete messages older than 2 weeks
+    for await (const [key, message] of messagesOlder) {
+      await message.delete();
+      count++;
+      console.log(
+        `Deleted (${count}/${messagesOlder.size}) messages in [${channel.name}] that were older than 2 weeks.`
+      );
+    }
+  }
 
   await interaction.editReply(`Deleted ${deletedMessages.size} messages!`);
 };

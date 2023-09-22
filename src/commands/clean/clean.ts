@@ -20,10 +20,28 @@ const clean = async () => {
       throw new Error("Cannot delete messages in this channel!");
     }
 
+    const messagesToDelete = await fetchedChannel.messages.fetch({
+      limit: 100,
+    });
     const deletedMessages = await fetchedChannel.bulkDelete(
-      Number(process.env.DELETE_AMOUNT) || 50,
+      messagesToDelete,
       true
     );
+    const messagesOlder = messagesToDelete.filter(
+      (val) => !deletedMessages.has(val.id)
+    );
+
+    if (messagesOlder.size > 0) {
+      let count = 0;
+      // Delete messages older than 2 weeks
+      for await (const [key, message] of messagesOlder) {
+        await message.delete();
+        count++;
+        console.log(
+          `Deleted (${count}/${messagesOlder.size}) messages in [${fetchedChannel.name}] that were older than 2 weeks.`
+        );
+      }
+    }
     console.log(
       `Deleted ${deletedMessages.size} messages in [${fetchedChannel.name}]`
     );
