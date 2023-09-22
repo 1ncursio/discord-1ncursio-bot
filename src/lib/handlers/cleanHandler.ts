@@ -18,7 +18,7 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
     fetchReply: true,
   });
 
-  const deletedMessages = await channel.bulkDelete(amount);
+  const deletedMessages = await channel.bulkDelete(amount, true);
 
   await interaction.editReply(`Deleted ${deletedMessages.size} messages!`);
 };
