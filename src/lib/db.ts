@@ -20,7 +20,7 @@ const db = {
     text: string,
     values?: I
   ) => {
-    return pool.query(text, values);
+    return pool.query<R>(text, values);
   },
 };
 

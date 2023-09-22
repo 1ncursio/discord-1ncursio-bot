@@ -20,7 +20,9 @@ const clean = async () => {
       throw new Error("Cannot delete messages in this channel!");
     }
 
-    const deletedMessages = await fetchedChannel.bulkDelete(1);
+    const deletedMessages = await fetchedChannel.bulkDelete(
+      Number(process.env.DELETE_AMOUNT) ?? 50
+    );
     console.log(
       `Deleted ${deletedMessages.size} messages in [${fetchedChannel.name}]`
     );
