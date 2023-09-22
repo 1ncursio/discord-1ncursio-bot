@@ -22,8 +22,7 @@ const handler = async (interaction: Interaction) => {
         .catch(handleDiscordjsError(interaction))
         .catch(handleDiscordAPIError(interaction))
     )
-    .otherwise(async () => await interaction.reply("Unknown command!"))
-    .catch((error) => console.error(error));
+    .otherwise(async () => await interaction.reply("Unknown command!"));
 };
 
 export default handler;
