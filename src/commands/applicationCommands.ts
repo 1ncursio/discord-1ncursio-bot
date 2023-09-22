@@ -1,8 +1,12 @@
 import { SlashCommandBuilder } from "discord.js";
 
+export enum Commands {
+  Clean = "clean",
+}
+
 const applicationCommands = [
   new SlashCommandBuilder()
-    .setName("clean")
+    .setName(Commands.Clean)
     .setNameLocalizations({
       ko: "청소",
     })

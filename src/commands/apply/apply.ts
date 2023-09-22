@@ -1,22 +1,23 @@
 import { REST, Routes } from "discord.js";
+import raise from "../../lib/utils/raise";
 import applicationCommands from "../applicationCommands";
 
 const apply = async () => {
-  if (!process.env.TOKEN) {
-    throw new Error("TOKEN environment variable is required!");
-  }
-
-  if (!process.env.APPLICATION_ID) {
-    throw new Error("APPLICATION_ID environment variable is required!");
-  }
-
-  const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+  const rest = new REST({ version: "10" }).setToken(
+    process.env.TOKEN ?? raise("TOKEN environment variable is required!")
+  );
 
   console.log("Started refreshing application (/) commands.");
 
-  await rest.put(Routes.applicationCommands(process.env.APPLICATION_ID), {
-    body: applicationCommands.map((command) => command.toJSON()),
-  });
+  await rest.put(
+    Routes.applicationCommands(
+      process.env.APPLICATION_ID ??
+        raise("APPLICATION_ID environment variable is required!")
+    ),
+    {
+      body: applicationCommands.map((command) => command.toJSON()),
+    }
+  );
 
   console.log("Successfully reloaded application (/) commands.");
 };

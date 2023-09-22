@@ -1,20 +1,20 @@
 import { ChannelType } from "discord.js";
-import { guilds } from "../../../data.json";
 import client from "../../lib/client";
+import Channel from "../../lib/models/channels";
+import Guild from "../../lib/models/guild";
+import raise from "../../lib/utils/raise";
 
 const clean = async () => {
+  const guilds = await Guild.all();
   for await (const guild of guilds) {
     await client.guilds.fetch(guild.id);
   }
 
-  const channels = guilds.flatMap((guild) => guild.channels);
+  const channels = await Channel.all();
 
   for await (const channel of channels) {
-    const fetchedChannel = await client.channels.fetch(channel.id);
-
-    if (!fetchedChannel) {
-      throw new Error("Channel not found!");
-    }
+    const fetchedChannel =
+      (await client.channels.fetch(channel.id)) ?? raise("Channel not found!");
 
     if (fetchedChannel.type !== ChannelType.GuildText) {
       throw new Error("Cannot delete messages in this channel!");

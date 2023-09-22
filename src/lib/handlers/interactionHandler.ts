@@ -1,10 +1,10 @@
 import {
-  ChannelType,
-  DiscordAPIError,
-  DiscordjsError,
-  Interaction,
+    ChannelType,
+    DiscordAPIError,
+    DiscordjsError,
+    Interaction,
 } from "discord.js";
-import { Commands } from "../commands";
+import { Commands } from "../../commands/applicationCommands";
 
 const interactionHandler = async (interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) return;
