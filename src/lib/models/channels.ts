@@ -1,4 +1,4 @@
-import pool from "../db";
+import pool from "$lib/db";
 import { TGuild } from "./guild";
 
 export type TChannel = {

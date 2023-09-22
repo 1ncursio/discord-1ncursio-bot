@@ -17,7 +17,13 @@
     "allowJs": true,
     "types": [
       "bun-types" // add Bun global
-    ]
+    ],
+    "paths": {
+      "$lib": ["./src/lib"],
+      "$lib/*": ["./src/lib/*"],
+      "$commands": ["./src/commands"],
+      "$commands/*": ["./src/commands/*"]
+    }
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules/**"]

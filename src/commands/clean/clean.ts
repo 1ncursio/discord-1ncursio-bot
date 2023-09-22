@@ -1,8 +1,8 @@
+import client from "$lib/client";
+import Channel from "$lib/models/channels";
+import Guild from "$lib/models/guild";
+import raise from "$lib/utils/raise";
 import { ChannelType } from "discord.js";
-import client from "../../lib/client";
-import Channel from "../../lib/models/channels";
-import Guild from "../../lib/models/guild";
-import raise from "../../lib/utils/raise";
 
 const clean = async () => {
   const guilds = await Guild.all();

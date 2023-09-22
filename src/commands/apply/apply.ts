@@ -1,6 +1,6 @@
+import applicationCommands from "$commands/applicationCommands";
+import raise from "$lib/utils/raise";
 import { REST, Routes } from "discord.js";
-import raise from "../../lib/utils/raise";
-import applicationCommands from "../applicationCommands";
 
 const apply = async () => {
   const rest = new REST({ version: "10" }).setToken(

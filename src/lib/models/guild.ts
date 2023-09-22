@@ -1,4 +1,4 @@
-import db from "../db";
+import db from "$lib/db";
 
 export type TGuild = {
   id: string;
