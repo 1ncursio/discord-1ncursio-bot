@@ -1,9 +1,9 @@
 import cron from "node-cron";
 import clean from "./commands/clean/clean";
 import client from "./lib/client";
-import interactionHandler from "./lib/handlers/interactionHandler";
+import handler from "./lib/handlers";
 
-client.on("interactionCreate", interactionHandler);
+client.on("interactionCreate", handler);
 
 // every 5 minutes
 cron.schedule("*/5 * * * *", clean);
