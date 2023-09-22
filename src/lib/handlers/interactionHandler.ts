@@ -1,8 +1,8 @@
 import {
-    ChannelType,
-    DiscordAPIError,
-    DiscordjsError,
-    Interaction,
+  ChannelType,
+  DiscordAPIError,
+  DiscordjsError,
+  Interaction,
 } from "discord.js";
 import { Commands } from "../commands";
 
@@ -13,7 +13,6 @@ const interactionHandler = async (interaction: Interaction) => {
     if (interaction.commandName === Commands.Clean) {
       const amount = interaction.options.getInteger("amount") ?? 10;
       const { channel } = interaction;
-
       if (channel?.type !== ChannelType.GuildText) {
         await interaction.reply("Cannot delete messages in this channel!");
         return;
@@ -29,16 +28,11 @@ const interactionHandler = async (interaction: Interaction) => {
         fetchReply: true,
       });
 
-      const d = await channel.bulkDelete(amount);
+      const deletedMessages = await channel.bulkDelete(amount);
 
-      //   d.forEach((message) => {
-      //     console.log(message?.author?.username);
-      //     console.log(message?.content);
-      //   });
-
-      await interaction.editReply(`Deleted ${d.size} messages!`);
+      await interaction.editReply(`Deleted ${deletedMessages.size} messages!`);
     } else {
-        await interaction.reply("Unknown command!");
+      await interaction.reply("Unknown command!");
     }
   } catch (error) {
     console.error(error);
