@@ -49,6 +49,27 @@ export const handleDiscordAPIError =
           await interaction.reply("I don't have permission to do that!");
         }
       })
+      .with(
+        50034 /* You can only bulk delete messages that are under 14 days old. */,
+        async () => {
+          if (interaction.deferred && !interaction.replied) {
+            await interaction.editReply(
+              "You can only bulk delete messages that are under 14 days old."
+            );
+          } else if (
+            (interaction.deferred && interaction.replied) ||
+            (!interaction.deferred && interaction.replied)
+          ) {
+            await interaction.followUp(
+              "You can only bulk delete messages that are under 14 days old."
+            );
+          } else {
+            await interaction.reply(
+              "You can only bulk delete messages that are under 14 days old."
+            );
+          }
+        }
+      )
       .with(10062 /* Unknown interaction */, async () => {
         if (interaction.deferred && !interaction.replied) {
           await interaction.editReply("This interaction doesn't exist!");

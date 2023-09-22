@@ -16,11 +16,13 @@ const handler = async (interaction: Interaction) => {
       cleanHandler(interaction)()
         .catch(handleDiscordjsError(interaction))
         .catch(handleDiscordAPIError(interaction))
+        .catch(Promise.reject)
     )
     .with(Commands.Ping, () =>
       pingHandler(interaction)()
         .catch(handleDiscordjsError(interaction))
         .catch(handleDiscordAPIError(interaction))
+        .catch(Promise.reject)
     )
     .otherwise(async () => await interaction.reply("Unknown command!"))
     .catch((error) => console.error(error));
