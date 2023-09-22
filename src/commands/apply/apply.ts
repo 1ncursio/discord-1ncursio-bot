@@ -1,7 +1,7 @@
 import { REST, Routes } from "discord.js";
-import applicationCommands from "./applicationCommands";
+import applicationCommands from "../applicationCommands";
 
-const main = async () => {
+const apply = async () => {
   if (!process.env.TOKEN) {
     throw new Error("TOKEN environment variable is required!");
   }
@@ -21,9 +21,4 @@ const main = async () => {
   console.log("Successfully reloaded application (/) commands.");
 };
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+export default apply;
