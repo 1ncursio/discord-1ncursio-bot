@@ -45,6 +45,8 @@ const Message = {
     }
   },
   bulkInsert: async (messages: Omit<TMessage, "deleted_at">[]) => {
+    if (messages.length === 0) return [];
+
     try {
       const query = `
         insert into

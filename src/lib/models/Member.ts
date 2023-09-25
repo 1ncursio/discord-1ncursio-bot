@@ -49,6 +49,8 @@ const Member = {
     }
   },
   bulkInsert: async (members: TMember[]) => {
+    if (members.length === 0) return [];
+
     try {
       const query = `
         insert into 
