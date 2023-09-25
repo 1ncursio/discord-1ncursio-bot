@@ -22,33 +22,58 @@ const Message = {
       return [];
     }
   },
-  add: async ({
+  insert: async ({
     id,
     channel_id,
     guild_id,
     author_id,
-    deleted_at,
-  }: TMessage) => {
+  }: Omit<TMessage, "deleted_at">) => {
     try {
       const query = `
         insert into
-          messages (id, channel_id, guild_id, author_id, deleted_at)
-        values ($1, $2, $3, $4, $5)
+          messages (id, channel_id, guild_id, author_id)
+        values ($1, $2, $3, $4)
         returning *
       `;
 
       return (
-        await db.query<TMessage>(query, [
-          id,
-          channel_id,
-          guild_id,
-          author_id,
-          deleted_at,
-        ])
+        await db.query<TMessage>(query, [id, channel_id, guild_id, author_id])
       ).rows[0];
     } catch (error) {
       console.error(error);
       return null;
+    }
+  },
+  bulkInsert: async (messages: Omit<TMessage, "deleted_at">[]) => {
+    try {
+      const query = `
+        insert into
+          messages (id, channel_id, guild_id, author_id, deleted_at)
+        values ${messages
+          .map(
+            (_, index) =>
+              `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${
+                index * 4 + 4
+              }, now())`
+          )
+          .join(", ")}
+        returning *
+      `;
+
+      return (
+        await db.query<TMessage>(
+          query,
+          messages.flatMap(({ id, channel_id, guild_id, author_id }) => [
+            id,
+            channel_id,
+            guild_id,
+            author_id,
+          ])
+        )
+      ).rows;
+    } catch (error) {
+      console.error(error);
+      return [];
     }
   },
 };

@@ -1,6 +1,8 @@
 import client from "$lib/client";
 import Channel from "$lib/models/Channel";
 import Guild from "$lib/models/Guild";
+import Member from "$lib/models/Member";
+import Message from "$lib/models/Message";
 import raise from "$lib/utils/raise";
 import { ChannelType } from "discord.js";
 
@@ -29,6 +31,28 @@ const clean = async () => {
     );
     const messagesOlder = messagesToDelete.filter(
       (val) => !deletedMessages.has(val.id)
+    );
+
+    await Member.bulkInsert(
+      deletedMessages.filter(Boolean).map((message) => ({
+        id: message?.author?.id ?? "",
+        username: message?.author?.username ?? "",
+        display_name: message?.author?.username ?? "",
+        global_name: message?.author?.globalName ?? "",
+        display_avatar_url:
+          message?.author?.displayAvatarURL({
+            size: 4096,
+          }) ?? "",
+      }))
+    );
+
+    await Message.bulkInsert(
+      deletedMessages.filter(Boolean).map((message) => ({
+        id: message?.id ?? "",
+        channel_id: message?.channelId ?? "",
+        guild_id: message?.guildId ?? "",
+        author_id: message?.author?.id ?? "",
+      }))
     );
 
     if (messagesOlder.size > 0) {

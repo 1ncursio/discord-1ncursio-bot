@@ -1,4 +1,7 @@
 import Channel from "$lib/models/Channel";
+import Guild from "$lib/models/Guild";
+import Member from "$lib/models/Member";
+import Message from "$lib/models/Message";
 import { ChannelType, ChatInputCommandInteraction } from "discord.js";
 
 const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
@@ -19,11 +22,24 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
     fetchReply: true,
   });
 
-  await Channel.upsert({
-    id: channel.id,
-    guild_id: channel.guildId,
-    name: channel.name,
-  });
+  await Promise.all([
+    Channel.upsert({
+      id: channel.id,
+      guild_id: channel.guildId,
+      name: channel.name,
+    }),
+    Guild.upsert({
+      id: channel.id,
+      name: channel.name,
+    }),
+    Member.upsert({
+      id: interaction.user.id,
+      username: interaction.user.username,
+      display_name: interaction.user.username,
+      global_name: interaction.user.globalName ?? "",
+      display_avatar_url: interaction.user.displayAvatarURL({ size: 4096 }),
+    }),
+  ]);
 
   const messagesToDelete = await channel.messages.fetch({
     limit: 100,
@@ -32,15 +48,15 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
   const messagesOlder = messagesToDelete.filter(
     (val) => !deletedMessages.has(val.id)
   );
-  deletedMessages.forEach((message) => {
-    console.log(message?.author?.username);
-    console.log(message?.author?.displayName);
-    console.log(message?.author?.globalName);
-    console.log(message?.author?.displayAvatarURL({ size: 4096 }));
-    // console.log(message?.author);
-    console.log(message?.createdTimestamp);
-    console.log(message?.nonce);
-  });
+
+  await Message.bulkInsert(
+    deletedMessages.filter(Boolean).map((message) => ({
+      id: message?.id ?? "",
+      channel_id: message?.channelId ?? "",
+      guild_id: message?.guildId ?? "",
+      author_id: message?.author?.id ?? "",
+    }))
+  );
 
   if (messagesOlder.size > 0) {
     let count = 0;

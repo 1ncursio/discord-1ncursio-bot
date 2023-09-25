@@ -16,9 +16,24 @@ const Guild = {
       return [];
     }
   },
-  add: async ({ id, name }: TGuild) => {
+  insert: async ({ id, name }: TGuild) => {
     try {
       const query = `insert into guilds (id, name) values ($1, $2) returning *`;
+
+      return (await db.query<TGuild>(query, [id, name])).rows[0];
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
+  upsert: async ({ id, name }: TGuild) => {
+    try {
+      const query = `
+        insert into guilds (id, name)
+        values ($1, $2)
+        on conflict (id) do update set name = $2
+        returning *
+      `;
 
       return (await db.query<TGuild>(query, [id, name])).rows[0];
     } catch (error) {

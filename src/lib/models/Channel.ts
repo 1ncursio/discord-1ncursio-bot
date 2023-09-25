@@ -28,7 +28,7 @@ const Channel = {
       return null;
     }
   },
-  add: async ({ id, guild_id, name }: TChannel) => {
+  insert: async ({ id, guild_id, name }: TChannel) => {
     try {
       const query = `insert into channels (id, guild_id, name) values ($1, $2, $3) returning *`;
 
