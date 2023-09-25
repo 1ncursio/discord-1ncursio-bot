@@ -25,6 +25,15 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
   const messagesOlder = messagesToDelete.filter(
     (val) => !deletedMessages.has(val.id)
   );
+  deletedMessages.forEach((message) => {
+    console.log(message?.author?.username);
+    console.log(message?.author?.displayName);
+    console.log(message?.author?.globalName);
+    console.log(message?.author?.displayAvatarURL({ size: 1024 }));
+    // console.log(message?.author);
+    console.log(message?.createdTimestamp);
+    console.log(message?.nonce);
+  });
 
   if (messagesOlder.size > 0) {
     let count = 0;

@@ -1,9 +1,10 @@
 import db from "$lib/db";
-import { TGuild } from "./guild";
+import { TGuild } from "./Guild";
 
 export type TChannel = {
   id: string;
   guild_id: TGuild["id"];
+  name: string;
 };
 
 const Channel = {

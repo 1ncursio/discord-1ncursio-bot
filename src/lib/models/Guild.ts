@@ -2,6 +2,7 @@ import db from "$lib/db";
 
 export type TGuild = {
   id: string;
+  name: string;
 };
 
 const Guild = {
@@ -15,11 +16,11 @@ const Guild = {
       return [];
     }
   },
-  add: async ({ id }: TGuild) => {
+  add: async ({ ...fields }: TGuild) => {
     try {
-      const query = `insert into guilds (id) values ($1) returning *`;
+      const query = `insert into guilds (id, name) values ($1, $2) returning *`;
 
-      return (await db.query<TGuild>(query, [id])).rows;
+      return (await db.query<TGuild>(query, [fields])).rows;
     } catch (error) {
       console.error(error);
       return null;

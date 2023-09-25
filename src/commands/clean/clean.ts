@@ -1,6 +1,6 @@
 import client from "$lib/client";
-import Channel from "$lib/models/channels";
-import Guild from "$lib/models/guild";
+import Channel from "$lib/models/Channel";
+import Guild from "$lib/models/Guild";
 import raise from "$lib/utils/raise";
 import { ChannelType } from "discord.js";
 
