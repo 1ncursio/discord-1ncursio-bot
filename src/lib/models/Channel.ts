@@ -32,7 +32,7 @@ const Channel = {
     try {
       const query = `insert into channels (id, guild_id, name) values ($1, $2, $3) returning *`;
 
-      return (await db.query<TChannel>(query, [id, guild_id, name])).rows;
+      return (await db.query<TChannel>(query, [id, guild_id, name])).rows[0];
     } catch (error) {
       console.error(error);
       return null;
@@ -47,7 +47,7 @@ const Channel = {
         returning *
       `;
 
-      return (await db.query<TChannel>(query, [id, guild_id, name])).rows;
+      return (await db.query<TChannel>(query, [id, guild_id, name])).rows[0];
     } catch (error) {
       console.error(error);
       return null;

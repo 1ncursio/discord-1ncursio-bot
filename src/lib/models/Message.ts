@@ -45,7 +45,7 @@ const Message = {
           author_id,
           deleted_at,
         ])
-      ).rows;
+      ).rows[0];
     } catch (error) {
       console.error(error);
       return null;

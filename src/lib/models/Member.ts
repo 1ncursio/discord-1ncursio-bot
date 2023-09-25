@@ -34,7 +34,7 @@ const Message = {
           display_name,
           display_avatar_url,
         ])
-      ).rows;
+      ).rows[0];
     } catch (error) {
       console.error(error);
       return null;

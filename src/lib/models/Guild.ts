@@ -20,7 +20,7 @@ const Guild = {
     try {
       const query = `insert into guilds (id, name) values ($1, $2) returning *`;
 
-      return (await db.query<TGuild>(query, [id, name])).rows;
+      return (await db.query<TGuild>(query, [id, name])).rows[0];
     } catch (error) {
       console.error(error);
       return null;

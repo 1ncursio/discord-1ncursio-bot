@@ -19,13 +19,11 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
     fetchReply: true,
   });
 
-  console.log('업설트 전');
   await Channel.upsert({
     id: channel.id,
     guild_id: channel.guildId,
     name: channel.name,
   });
-  console.log('업설트 후');
 
   const messagesToDelete = await channel.messages.fetch({
     limit: 100,
@@ -38,7 +36,7 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
     console.log(message?.author?.username);
     console.log(message?.author?.displayName);
     console.log(message?.author?.globalName);
-    console.log(message?.author?.displayAvatarURL({ size: 1024 }));
+    console.log(message?.author?.displayAvatarURL({ size: 4096 }));
     // console.log(message?.author);
     console.log(message?.createdTimestamp);
     console.log(message?.nonce);
