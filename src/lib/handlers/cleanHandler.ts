@@ -29,8 +29,8 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
       name: channel.name,
     }),
     Guild.upsert({
-      id: channel.id,
-      name: channel.name,
+      id: channel.guild.id,
+      name: channel.guild.name,
     }),
     Member.upsert({
       id: interaction.user.id,
