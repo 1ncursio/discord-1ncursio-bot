@@ -18,6 +18,16 @@ const Channel = {
       return [];
     }
   },
+  get: async (id: TChannel["id"]) => {
+    try {
+      const query = `select * from channels where id = $1`;
+
+      return (await db.query<TChannel>(query, [id])).rows[0];
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
   add: async ({ id, guild_id }: TChannel) => {
     try {
       const query = `insert into channels (id, guild_id) values ($1, $2) returning *`;
