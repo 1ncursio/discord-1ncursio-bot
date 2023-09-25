@@ -48,13 +48,13 @@ const Message = {
     try {
       const query = `
         insert into
-          messages (id, channel_id, guild_id, author_id, deleted_at)
+          messages (id, channel_id, guild_id, author_id)
         values ${messages
           .map(
             (_, index) =>
               `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${
                 index * 4 + 4
-              }, now())`
+              })`
           )
           .join(", ")}
         returning *
