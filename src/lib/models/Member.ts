@@ -18,7 +18,7 @@ const Message = {
       return [];
     }
   },
-  add: async ({ ...fields }: TMember) => {
+  add: async ({ id, username, display_name, display_avatar_url }: TMember) => {
     try {
       const query = `
         insert into 
@@ -27,7 +27,14 @@ const Message = {
         returning *
       `;
 
-      return (await db.query<TMember>(query, [fields])).rows;
+      return (
+        await db.query<TMember>(query, [
+          id,
+          username,
+          display_name,
+          display_avatar_url,
+        ])
+      ).rows;
     } catch (error) {
       console.error(error);
       return null;

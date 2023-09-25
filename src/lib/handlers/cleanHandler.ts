@@ -1,3 +1,4 @@
+import Channel from "$lib/models/Channel";
 import { ChannelType, ChatInputCommandInteraction } from "discord.js";
 
 const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
@@ -17,6 +18,14 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
     ephemeral: true,
     fetchReply: true,
   });
+
+  console.log('업설트 전');
+  await Channel.upsert({
+    id: channel.id,
+    guild_id: channel.guildId,
+    name: channel.name,
+  });
+  console.log('업설트 후');
 
   const messagesToDelete = await channel.messages.fetch({
     limit: 100,

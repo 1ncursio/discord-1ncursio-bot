@@ -28,11 +28,26 @@ const Channel = {
       return null;
     }
   },
-  add: async ({ id, guild_id }: TChannel) => {
+  add: async ({ id, guild_id, name }: TChannel) => {
     try {
-      const query = `insert into channels (id, guild_id) values ($1, $2) returning *`;
+      const query = `insert into channels (id, guild_id, name) values ($1, $2, $3) returning *`;
 
-      return (await db.query<TChannel>(query, [id, guild_id])).rows;
+      return (await db.query<TChannel>(query, [id, guild_id, name])).rows;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
+  upsert: async ({ id, guild_id, name }: TChannel) => {
+    try {
+      const query = `
+        insert into channels (id, guild_id, name)
+        values ($1, $2, $3)
+        on conflict (id) do update set name = $3
+        returning *
+      `;
+
+      return (await db.query<TChannel>(query, [id, guild_id, name])).rows;
     } catch (error) {
       console.error(error);
       return null;

@@ -22,11 +22,30 @@ const Message = {
       return [];
     }
   },
-  add: async ({ id }: TMessage) => {
+  add: async ({
+    id,
+    channel_id,
+    guild_id,
+    author_id,
+    deleted_at,
+  }: TMessage) => {
     try {
-      const query = `insert into messages (id) values ($1) returning *`;
+      const query = `
+        insert into
+          messages (id, channel_id, guild_id, author_id, deleted_at)
+        values ($1, $2, $3, $4, $5)
+        returning *
+      `;
 
-      return (await db.query<TMessage>(query, [id])).rows;
+      return (
+        await db.query<TMessage>(query, [
+          id,
+          channel_id,
+          guild_id,
+          author_id,
+          deleted_at,
+        ])
+      ).rows;
     } catch (error) {
       console.error(error);
       return null;
