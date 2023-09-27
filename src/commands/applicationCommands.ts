@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from "discord.js";
 export enum Commands {
   Clean = "clean",
   Ping = "ping",
+  Add = "add",
 }
 
 const applicationCommands = [
@@ -38,6 +39,12 @@ const applicationCommands = [
     .setDescription("Send a ping message")
     .setDescriptionLocalizations({
       ko: "핑 메시지를 보냅니다.",
+    }),
+  new SlashCommandBuilder()
+    .setName(Commands.Add)
+    .setDescription("Add a subcommand")
+    .addSubcommand((subcommand) => {
+      return subcommand.setName("test").setDescription("test description");
     }),
 ];
 
