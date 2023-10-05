@@ -16,6 +16,16 @@ const Guild = {
       return [];
     }
   },
+  get: async (id: TGuild["id"]) => {
+    try {
+      const query = `select * from guilds where id = $1`;
+
+      return (await db.query<TGuild>(query, [id])).rows[0];
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
   insert: async ({ id, name }: TGuild) => {
     try {
       const query = `insert into guilds (id, name) values ($1, $2) returning *`;
