@@ -35,9 +35,9 @@ const channelActivityHandler =
         await Channel.upsert({
           id: targetChannel.id,
           guild_id: channel.guildId,
-          name: channel.guild.name,
+          name: channel.name,
         });
-        
+
         await ChannelCommandPair.upsert({
           channel_id: targetChannel.id,
           command_id: command.id,
