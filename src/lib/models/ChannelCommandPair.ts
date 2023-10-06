@@ -58,7 +58,7 @@ const ChannelCommandPair = {
       const query = `
         insert into channel_command_pairs (channel_id, command_id)
         values ($1, $2)
-        on conflict (id) do update set command_id = $2
+        on conflict (channel_id, command_id) do nothing
         returning *
       `;
 
