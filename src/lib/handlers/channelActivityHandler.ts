@@ -2,6 +2,7 @@ import { Commands, SubCommands } from "$commands/applicationCommands";
 import Channel from "$lib/models/Channel";
 import ChannelCommandPair from "$lib/models/ChannelCommandPair";
 import Command from "$lib/models/Command";
+import raise from "$lib/utils/raise";
 import { ChannelType, ChatInputCommandInteraction } from "discord.js";
 import { match } from "ts-pattern";
 
@@ -35,7 +36,7 @@ const channelActivityHandler =
         await Channel.upsert({
           id: targetChannel.id,
           guild_id: channel.guildId,
-          name: channel.name,
+          name: targetChannel.name ?? raise("Channel name is null!"),
         });
 
         await ChannelCommandPair.upsert({
