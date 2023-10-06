@@ -20,6 +20,20 @@ const ChannelCommandPair = {
       return [];
     }
   },
+  allByCommandName: async (command_name: TCommand["name"]) => {
+    try {
+      const query = `
+        select ccp.* from channel_command_pairs ccp
+        inner join commands c on c.id = ccp.command_id
+        where c.name = $1
+      `;
+
+      return (await db.query<TChannelCommandPair>(query, [command_name])).rows;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  },
   get: async ({
     channel_id,
     command_id,

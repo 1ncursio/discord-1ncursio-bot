@@ -1,5 +1,6 @@
+import { Commands } from "$commands/applicationCommands";
 import client from "$lib/client";
-import Channel from "$lib/models/Channel";
+import ChannelCommandPair from "$lib/models/ChannelCommandPair";
 import Guild from "$lib/models/Guild";
 import Member from "$lib/models/Member";
 import Message from "$lib/models/Message";
@@ -12,11 +13,14 @@ const clean = async () => {
     await client.guilds.fetch(guild.id);
   }
 
-  const channels = await Channel.all();
+  const channelCommandPairs = await ChannelCommandPair.allByCommandName(
+    Commands.AutoCleaner
+  );
 
-  for await (const channel of channels) {
+  for await (const channelCommandPair of channelCommandPairs) {
     const fetchedChannel =
-      (await client.channels.fetch(channel.id)) ?? raise("Channel not found!");
+      (await client.channels.fetch(channelCommandPair.channel_id)) ??
+      raise("Channel not found!");
 
     if (fetchedChannel.type !== ChannelType.GuildText) {
       throw new Error("Cannot delete messages in this channel!");

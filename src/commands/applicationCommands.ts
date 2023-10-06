@@ -15,6 +15,12 @@ export enum SubCommands {
 
 const applicationCommands = [
   new SlashCommandBuilder()
+    .setName(Commands.Ping)
+    .setDescription("Send a ping message")
+    .setDescriptionLocalizations({
+      ko: "핑 메시지를 보냅니다.",
+    }),
+  new SlashCommandBuilder()
     .setName(Commands.Cleaner)
     .setDescription("Clean up the messages. 1 to 100, default 10.")
     .setDescriptionLocalizations({
@@ -33,19 +39,47 @@ const applicationCommands = [
         .setAutocomplete(true)
     ),
   new SlashCommandBuilder()
-    .setName(Commands.Ping)
-    .setDescription("Send a ping message")
-    .setDescriptionLocalizations({
-      ko: "핑 메시지를 보냅니다.",
-    }),
-  new SlashCommandBuilder()
-    .setName(Commands.Add)
-    .setDescription("Add a subcommand")
+    .setName(Commands.AutoCleaner)
+    .setDescription("Set the text channel to automatically clean up.")
     .addSubcommand((subcommand) => {
-      return subcommand.setName("test").setDescription("test description");
+      return subcommand
+        .setName(SubCommands.Set)
+        .setDescription("Set the text channel to automatically clean up.")
+        .setDescriptionLocalizations({
+          ko: "자동으로 청소할 텍스트 채널을 설정합니다.",
+        })
+        .addChannelOption((option) => {
+          return option
+            .setName("channel")
+            .setDescription("The text channel to automatically clean up.")
+            .setDescriptionLocalizations({
+              ko: "자동으로 청소할 텍스트 채널",
+            })
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(true);
+        });
     })
     .addSubcommand((subcommand) => {
-      return subcommand.setName("test2").setDescription("test description22");
+      return subcommand
+        .setName(SubCommands.Remove)
+        .setDescription(
+          "Remove the text channel from automatically cleaning up."
+        )
+        .setDescriptionLocalizations({
+          ko: "자동 청소 중인 텍스트 채널을 제거합니다.",
+        })
+        .addChannelOption((option) => {
+          return option
+            .setName("channel")
+            .setDescription(
+              "The text channel to remove from automatically cleaning up."
+            )
+            .setDescriptionLocalizations({
+              ko: "자동 청소 중인 텍스트 채널",
+            })
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(true);
+        });
     }),
   new SlashCommandBuilder()
     .setName(Commands.ChannelActivity)
@@ -85,6 +119,15 @@ const applicationCommands = [
             .addChannelTypes(ChannelType.GuildVoice)
             .setRequired(true);
         });
+    }),
+  new SlashCommandBuilder()
+    .setName(Commands.Add)
+    .setDescription("Add a subcommand")
+    .addSubcommand((subcommand) => {
+      return subcommand.setName("test").setDescription("test description");
+    })
+    .addSubcommand((subcommand) => {
+      return subcommand.setName("test2").setDescription("test description22");
     }),
 ];
 
