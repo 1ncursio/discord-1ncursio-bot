@@ -32,17 +32,16 @@ const channelActivityHandler =
 
     match(subcommand)
       .with(SubCommands.Set, async () => {
-        await Promise.all([
-          Channel.upsert({
-            id: targetChannel.id,
-            guild_id: channel.guildId,
-            name: channel.guild.name,
-          }),
-          ChannelCommandPair.upsert({
-            channel_id: targetChannel.id,
-            command_id: command.id,
-          }),
-        ]);
+        await Channel.upsert({
+          id: targetChannel.id,
+          guild_id: channel.guildId,
+          name: channel.guild.name,
+        });
+        
+        await ChannelCommandPair.upsert({
+          channel_id: targetChannel.id,
+          command_id: command.id,
+        });
 
         await interaction.reply(
           `Set channel activity for ${targetChannel.name} channel! 🎉`
