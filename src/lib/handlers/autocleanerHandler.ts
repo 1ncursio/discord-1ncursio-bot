@@ -1,77 +1,77 @@
+import { Commands, SubCommands } from "$commands/applicationCommands";
 import Channel from "$lib/models/Channel";
-import Guild from "$lib/models/Guild";
-import Member from "$lib/models/Member";
-import Message from "$lib/models/Message";
+import ChannelCommandPair from "$lib/models/ChannelCommandPair";
+import Command from "$lib/models/Command";
+import raise from "$lib/utils/raise";
 import { ChannelType, ChatInputCommandInteraction } from "discord.js";
+import { match } from "ts-pattern";
 
 const autocleanerHandler =
   (interaction: ChatInputCommandInteraction) => async () => {
-    const amount = interaction.options.getInteger("amount") ?? 10;
+    const command = await Command.get({ name: Commands.AutoCleaner });
+
+    if (!command) {
+      await interaction.reply("Unknown command!");
+      return;
+    }
+
     const { channel } = interaction;
     if (channel?.type !== ChannelType.GuildText) {
-      await interaction.reply("Cannot delete messages in this channel!");
+      await interaction.reply("Cannot set autocleaner in this channel!");
       return;
     }
 
-    if (amount < 1 || amount > 100) {
-      await interaction.reply("Amount must be between 1 and 100!");
+    const targetChannel = interaction.options.getChannel("channel");
+    const subcommand = interaction.options.getSubcommand();
+
+    const isTextChannel = targetChannel?.type === ChannelType.GuildText;
+
+    if (!isTextChannel) {
+      await interaction.reply("Cannot set autocleaner in this channel!");
       return;
     }
 
-    await interaction.deferReply({
-      ephemeral: true,
-      fetchReply: true,
-    });
+    match(subcommand)
+      .with(SubCommands.Set, async () => {
+        await Channel.upsert({
+          id: targetChannel.id,
+          guild_id: channel.guildId,
+          name: targetChannel.name ?? raise("Channel name is null!"),
+        });
 
-    await Promise.all([
-      Channel.upsert({
-        id: channel.id,
-        guild_id: channel.guildId,
-        name: channel.name,
-      }),
-      Guild.upsert({
-        id: channel.guild.id,
-        name: channel.guild.name,
-      }),
-      Member.upsert({
-        id: interaction.user.id,
-        username: interaction.user.username,
-        display_name: interaction.user.username,
-        global_name: interaction.user.globalName ?? "",
-        display_avatar_url: interaction.user.displayAvatarURL({ size: 4096 }),
-      }),
-    ]);
+        await ChannelCommandPair.upsert({
+          channel_id: targetChannel.id,
+          command_id: command.id,
+        });
 
-    const messagesToDelete = await channel.messages.fetch({
-      limit: amount,
-    });
-    const deletedMessages = await channel.bulkDelete(messagesToDelete, true);
-    const messagesOlder = messagesToDelete.filter(
-      (val) => !deletedMessages.has(val.id)
-    );
-
-    await Message.bulkInsert(
-      deletedMessages.filter(Boolean).map((message) => ({
-        id: message?.id ?? "",
-        channel_id: message?.channelId ?? "",
-        guild_id: message?.guildId ?? "",
-        author_id: message?.author?.id ?? "",
-      }))
-    );
-
-    if (messagesOlder.size > 0) {
-      let count = 0;
-      // Delete messages older than 2 weeks
-      for await (const [key, message] of messagesOlder) {
-        await message.delete();
-        count++;
-        console.log(
-          `Deleted (${count}/${messagesOlder.size}) messages in [${channel.name}] that were older than 2 weeks.`
+        await interaction.reply(
+          `Successfully set autocleaner for ${targetChannel.name} channel! 🎉`
         );
-      }
-    }
+      })
+      .with(SubCommands.Remove, async () => {
+        // check if channel command pair exists
+        const channelCommandPair = await ChannelCommandPair.get({
+          channel_id: targetChannel.id,
+          command_id: command.id,
+        });
 
-    await interaction.editReply(`Deleted ${deletedMessages.size} messages!`);
+        if (!channelCommandPair) {
+          await interaction.reply(
+            `Autocleaner for ${targetChannel.name} channel does not exist!`
+          );
+          return;
+        }
+
+        await ChannelCommandPair.delete({
+          channel_id: targetChannel.id,
+          command_id: command.id,
+        });
+
+        await interaction.reply(
+          `Successfully removed autocleaner for ${targetChannel.name} channel! 🎉`
+        );
+      })
+      .otherwise(async () => await interaction.reply("Unknown subcommand!"));
   };
 
 export default autocleanerHandler;
