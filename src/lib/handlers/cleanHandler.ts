@@ -42,7 +42,7 @@ const cleanHandler = (interaction: ChatInputCommandInteraction) => async () => {
   ]);
 
   const messagesToDelete = await channel.messages.fetch({
-    limit: 100,
+    limit: amount,
   });
   const deletedMessages = await channel.bulkDelete(messagesToDelete, true);
   const messagesOlder = messagesToDelete.filter(
